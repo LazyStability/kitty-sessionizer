@@ -1,9 +1,55 @@
 #!/usr/bin/env bash
 
+## Globals ##
 TS_SEARCH_PATHS=(/data/Software:1)
-SESSION_FILE_PREFIX="$XDG_DATA_HOME/kitty-sessions"
+VERSION="0.1"
+SESSION_FILE_PREFIX=/tmp/kitty-sessions
 
+show_help(){
+        printf "%s\n" \
+            "Usage: kitty-sessionizer [OPTIONS]"
+            "Options:"
+            "  -h, --help             Display this help message"
+            "  -s, --session <name>   session command index"
+            "  -p, --persistent       create Session in XDG_DATA_HOME instead of tmp"
+            "  -v, --version          print the current version"
+            " "
+            "For more information about kitty session visit: https://sw.kovidgoyal.net/kitty/overview/#startup-sessions"
+}
+
+## Variables ##
+session=""
+session_path=""
+
+while [[ "$#" -gt 0 ]]; do
+    case "$1" in
+    -h | --help)
+        show_help
+        ;;
+    -s | --session)
+        # TODO: Add a function to select 1-5 prominent sessions
+        # Something like kitty-sessionizer -s 0
+        ;;
+    -v | --version)
+        printf "kitty-sessionizer %s created by LazyStabilty" "$VERSION"
+        ;;
+    -p | --persistent)
+        SESSION_FILE_PREFIX="$XDG_DATA_HOME/kitty-sessions"
+        ;;
+    -x | --close-session)
+        close_session=true
+        ;;
+    *)
+        ;;
+    esac
+done
+
+## Functions ##
 find_dirs() {
+    # TODO: Add prominent sessions with custom naming
+    echo "/persist/etc/nixos"
+    # Something like $SESSION="nixconfig"
+    # TODO: Persistent session also need to be searched and put in front of normal ones
 
     # note: TS_SEARCH_PATHS is an array of paths to search for directories
     # if the path ends with :number, it will search for directories with a max depth of number ;)
@@ -21,19 +67,39 @@ find_dirs() {
     done
 }
 
-SESSION_PATH=$(find_dirs | fzf --prompt "Switch to session > ")
-SESSION=${SESSION_PATH#/data/Software/}
+# Creates a default file, change this if you want it to look different
+create_session_file(){
+    printf "%s\n"\
+        "cd $session_path/$session" \
+        "launch vim"
+        "new_tab onefetch" \
+        "cd $session_path/$session" \
+        "launch --hold onefetch" \
+        "new_tab terminal" \
+        "cd $session_path/$session" \
+        "launch zsh" \
+        > "$SESSION_FILE_PREFIX/$session.session"
+}
+
+## Script ##
+[[ -z $session_path ]] && session_path=$(find_dirs | fzf --prompt "Switch to session > " || exit 1)
+
+[[ -z "$session_path" ]] && {
+    printf "No session selected\n"
+    show_help
+    exit 1
+} 
+
+# If Session is not yet set,
+[[ -z "$session" ]] && session=${session_path##*/}
 
 mkdir -p "$SESSION_FILE_PREFIX"
 
-[[ ! -f "$SESSION_FILE_PREFIX/$SESSION.session" ]] && printf "%s\n"\
-                                                        "cd $SESSION_PATH/$SESSION" \
-                                                        "launch vim new_tab onefetch" \
-                                                        "cd $SESSION_PATH/$SESSION" \
-                                                        "launch --hold onefetch" \
-                                                        "new_tab terminal" \
-                                                        "cd $SESSION_PATH/$SESSION" \
-                                                        "launch zsh" \
-                                                        > "$SESSION_FILE_PREFIX/$SESSION.session"
+[[ ! -f "$SESSION_FILE_PREFIX/$session.session" ]] && create_session_file
 
-kitten @ action goto_session "$SESSION_FILE_PREFIX/$SESSION.session"
+# Open or close the session
+if [[ -n "$close_session" ]]; then
+    kitten @ action close_session "$SESSION_FILE_PREFIX/$session.session"
+else
+    kitten @ action goto_session "$SESSION_FILE_PREFIX/$session.session"
+fi
