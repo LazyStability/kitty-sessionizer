@@ -88,7 +88,13 @@ create_session_file(){
 
 mkdir -p "$SESSION_FILE_PREFIX"
 
-[[ ! -f "$SESSION_FILE_PREFIX/$session.session" ]] && create_session_file
+if [[ -f "$PERSISTENT_SESSION_STORAGE/$session.session" ]]; then
+    SESSION_FILE_PREFIX="$PERSISTENT_SESSION_STORAGE"
+elif [[ ! -f "$SESSION_FILE_PREFIX/$session.session" ]]; then
+    echo "there"
+    create_session_file
+fi
+
 
 # Open or close the session
 if [[ -n "$close_session" ]]; then
