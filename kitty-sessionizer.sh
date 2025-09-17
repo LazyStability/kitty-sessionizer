@@ -110,7 +110,9 @@ fi
 
 # Open or close the session
 if [[ -n "$close_session" ]]; then
-    kitten @ action close_session "$SESSION_FILE_PREFIX/$session.session"
+    # BUG: This does error with list index out of range
+    # kitten @ action close_session "$SESSION_FILE_PREFIX/$session.session"
+    kitten @ action close_session "$session"
 else
     kitten @ action goto_session "$SESSION_FILE_PREFIX/$session.session"
 fi
