@@ -1,0 +1,8 @@
+cd @@session-path@@ 
+launch --title "@@session@@ - vim" vim 
+new_tab @@session@@ - onefetch
+cd @@session-path@@ 
+launch --hold onefetch 
+new_tab @@session@@ - zsh
+cd @@session-path@@ 
+launch zsh

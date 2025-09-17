@@ -67,18 +67,11 @@ find_dirs() {
     done
 }
 
-# Creates a default file, change this if you want it to look different
+# Creates a default file, change ./default.session if you want it to look different
 create_session_file(){
-    printf "%s\n"\
-        "cd $session_path/$session" \
-        "launch vim"
-        "new_tab onefetch" \
-        "cd $session_path/$session" \
-        "launch --hold onefetch" \
-        "new_tab terminal" \
-        "cd $session_path/$session" \
-        "launch zsh" \
-        > "$SESSION_FILE_PREFIX/$session.session"
+    cat "$SCRIPT_DIR"/default.session > "$SESSION_FILE_PREFIX/$session.session"
+    sed -i s#@@session-path@@#"$session_path"# "$SESSION_FILE_PREFIX/$session.session" 
+    sed -i s#@@session@@#"$session"# "$SESSION_FILE_PREFIX/$session.session" 
 }
 
 ## Script ##
