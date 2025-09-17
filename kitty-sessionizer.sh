@@ -3,17 +3,20 @@
 ## Globals ##
 TS_SEARCH_PATHS=(/data/Software:1)
 VERSION="0.1"
+PERSISTENT_SESSION_STORAGE="$XDG_DATA_HOME/kitty-sessions/"
 SESSION_FILE_PREFIX=/tmp/kitty-sessions
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 show_help(){
         printf "%s\n" \
-            "Usage: kitty-sessionizer [OPTIONS]"
-            "Options:"
-            "  -h, --help             Display this help message"
-            "  -s, --session <name>   session command index"
-            "  -p, --persistent       create Session in XDG_DATA_HOME instead of tmp"
-            "  -v, --version          print the current version"
-            " "
+            "Usage: kitty-sessionizer [OPTIONS]" \
+            "Options:" \
+            "  -h, --help             Display this help message" \
+            "  -s, --session <name>   session command index" \
+            "  -p, --persistent       create Session in XDG_DATA_HOME instead of tmp" \
+            "  -x, --close-session    will close the selected session" \
+            "  -v, --version          print the current version" \
+            " " \
             "For more information about kitty session visit: https://sw.kovidgoyal.net/kitty/overview/#startup-sessions"
 }
 
@@ -25,21 +28,30 @@ while [[ "$#" -gt 0 ]]; do
     case "$1" in
     -h | --help)
         show_help
+        exit
         ;;
     -s | --session)
         # TODO: Add a function to select 1-5 prominent sessions
         # Something like kitty-sessionizer -s 0
+        session_name="$2"
+        shift
+        shift
         ;;
     -v | --version)
         printf "kitty-sessionizer %s created by LazyStabilty" "$VERSION"
+        exit
         ;;
     -p | --persistent)
-        SESSION_FILE_PREFIX="$XDG_DATA_HOME/kitty-sessions"
+        SESSION_FILE_PREFIX="$PERSISTENT_SESSION_STORAGE"
+        shift
         ;;
     -x | --close-session)
         close_session=true
+        shift
         ;;
     *)
+        show_help
+        exit 1
         ;;
     esac
 done
