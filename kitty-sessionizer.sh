@@ -44,6 +44,8 @@ while [[ "$#" -gt 0 ]]; do
         # TODO: Add a function to select 1-5 prominent sessions
         # Something like kitty-sessionizer -s 0
         session_name="$2"
+        echo "Not implemented yet" >&2
+        exit 1
         shift
         shift
         ;;
@@ -99,7 +101,7 @@ create_session_file(){
 [[ -z $session_path ]] && session_path=$(find_dirs | fzf --prompt "Switch to session > " || exit 1)
 
 [[ -z "$session_path" ]] && {
-    printf "No session selected\n"
+    printf "No session selected" >&2
     show_help
     exit 1
 } 
@@ -112,7 +114,6 @@ mkdir -p "$SESSION_FILE_PREFIX"
 if [[ -f "$PERSISTENT_SESSION_STORAGE/$session.session" ]]; then
     SESSION_FILE_PREFIX="$PERSISTENT_SESSION_STORAGE"
 elif [[ ! -f "$SESSION_FILE_PREFIX/$session.session" ]]; then
-    echo "there"
     create_session_file
 fi
 
