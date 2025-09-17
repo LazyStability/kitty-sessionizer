@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-
 ## Globals ##
-TS_SEARCH_PATHS=(/data/Software:1)
+CONFIG_FILE_NAME="kitty-sessionizer.conf"
+CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/kitty"
+CONFIG_FILE="$CONFIG_DIR/$CONFIG_FILE_NAME"
 VERSION="0.1"
 PERSISTENT_SESSION_STORAGE="$XDG_DATA_HOME/kitty-sessions/"
 SESSION_FILE_PREFIX=/tmp/kitty-sessions
@@ -19,10 +20,19 @@ show_help(){
             " " \
             "For more information about kitty session visit: https://sw.kovidgoyal.net/kitty/overview/#startup-sessions"
 }
-
 ## Variables ##
 session=""
 session_path=""
+
+## Entry point ##
+if [[ -f "$CONFIG_FILE" ]]; then
+    source "$CONFIG_FILE"
+fi
+
+if [[ -f "$CONFIG_FILE_NAME" ]]; then
+    source "$CONFIG_FILE_NAME"
+fi
+
 
 while [[ "$#" -gt 0 ]]; do
     case "$1" in
@@ -59,8 +69,7 @@ done
 ## Functions ##
 find_dirs() {
     # TODO: Add prominent sessions with custom naming
-    echo "/persist/etc/nixos"
-    # Something like $SESSION="nixconfig"
+    # Something like $SESSION="super-duper name"
     # TODO: Persistent session also need to be searched and put in front of normal ones
 
     # note: TS_SEARCH_PATHS is an array of paths to search for directories
