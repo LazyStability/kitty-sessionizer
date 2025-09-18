@@ -20,6 +20,10 @@ show_help(){
             " " \
             "For more information about kitty session visit: https://sw.kovidgoyal.net/kitty/overview/#startup-sessions"
 }
+log(){
+    echo "$*"
+}
+
 ## Variables ##
 session=""
 session_path=""
@@ -65,6 +69,7 @@ if [[ "$SESSION_FILE_PREFIX" == "$PERSISTENT_SESSION_STORAGE" ]]; then
     read -rp "Session Name:" session
     read -erp "Session path:" session_path
 fi
+log "kitty-sessionizer($VERSION): session=$session path=$session_path"
 
 ## Functions ##
 find_dirs() {
@@ -90,6 +95,7 @@ find_dirs() {
 
 # Creates a default file, change ./default.session if you want it to look different
 create_session_file(){
+    log "Creating session file: $SESSION_FILE_PREFIX/$session.session"
     cat "$CONFIG_DIR"/default.session > "$SESSION_FILE_PREFIX/$session.session"
     sed -i s#@@session-path@@#"$session_path"# "$SESSION_FILE_PREFIX/$session.session" 
     sed -i s#@@session@@#"$session"# "$SESSION_FILE_PREFIX/$session.session" 
@@ -107,6 +113,8 @@ create_session_file(){
 # If Session is not yet set,
 [[ -z "$session" ]] && session=${session_path##*/}
 
+log "Variables set: session=$session path=$session_path"
+
 mkdir -p "$SESSION_FILE_PREFIX"
 
 if [[ -f "$PERSISTENT_SESSION_STORAGE/$session.session" ]]; then
@@ -116,6 +124,7 @@ elif [[ ! -f "$SESSION_FILE_PREFIX/$session.session" ]]; then
 fi
 
 
+log "Opening:$SESSION_FILE_PREFIX/$session.session"
 kitten @ action goto_session "$SESSION_FILE_PREFIX/$session.session"
 
 # Focus the first tab
@@ -129,4 +138,5 @@ title=$(awk '/^new_tab/ {
     }
     exit
 }' "$SESSION_FILE_PREFIX/$session.session")
+log "title of focused tab:$title"
 kitten @ focus-tab --match "title:$title"
