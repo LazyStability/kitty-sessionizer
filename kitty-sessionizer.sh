@@ -6,7 +6,6 @@ CONFIG_FILE="$CONFIG_DIR/$CONFIG_FILE_NAME"
 VERSION="0.1"
 PERSISTENT_SESSION_STORAGE="$XDG_DATA_HOME/kitty-sessions/"
 SESSION_FILE_PREFIX=/tmp/kitty-sessions
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 show_help(){
         printf "%s\n" \
@@ -87,7 +86,7 @@ find_dirs() {
 
 # Creates a default file, change ./default.session if you want it to look different
 create_session_file(){
-    cat "$SCRIPT_DIR"/default.session > "$SESSION_FILE_PREFIX/$session.session"
+    cat "$CONFIG_DIR"/default.session > "$SESSION_FILE_PREFIX/$session.session"
     sed -i s#@@session-path@@#"$session_path"# "$SESSION_FILE_PREFIX/$session.session" 
     sed -i s#@@session@@#"$session"# "$SESSION_FILE_PREFIX/$session.session" 
 }
