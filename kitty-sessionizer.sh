@@ -73,9 +73,7 @@ log "kitty-sessionizer($VERSION): session=$session path=$session_path"
 
 ## Functions ##
 find_dirs() {
-    # TODO: Add prominent sessions with custom naming
-    # Something like $SESSION="super-duper name"
-    # TODO: Persistent session also need to be searched and put in front of normal ones
+    find "$PERSISTENT_SESSION_STORAGE"  -type f  -name '*.session' -print0 | xargs -0 -- basename -s .session
 
     # note: TS_SEARCH_PATHS is an array of paths to search for directories
     # if the path ends with :number, it will search for directories with a max depth of number ;)
