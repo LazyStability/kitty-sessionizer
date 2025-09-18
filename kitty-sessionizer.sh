@@ -15,7 +15,6 @@ show_help(){
             "  -h, --help             Display this help message" \
             "  -s, --session <name>   session command index" \
             "  -p, --persistent       create Session in XDG_DATA_HOME instead of tmp" \
-            "  -x, --close-session    will close the selected session" \
             "  -v, --version          print the current version" \
             " " \
             "For more information about kitty session visit: https://sw.kovidgoyal.net/kitty/overview/#startup-sessions"
@@ -55,10 +54,6 @@ while [[ "$#" -gt 0 ]]; do
         ;;
     -p | --persistent)
         SESSION_FILE_PREFIX="$PERSISTENT_SESSION_STORAGE"
-        shift
-        ;;
-    -x | --close-session)
-        close_session=true
         shift
         ;;
     *)
@@ -118,11 +113,4 @@ elif [[ ! -f "$SESSION_FILE_PREFIX/$session.session" ]]; then
 fi
 
 
-# Open or close the session
-if [[ -n "$close_session" ]]; then
-    # BUG: This does error with list index out of range
-    # kitten @ action close_session "$SESSION_FILE_PREFIX/$session.session"
-    kitten @ action close_session "$session"
-else
-    kitten @ action goto_session "$SESSION_FILE_PREFIX/$session.session"
-fi
+kitten @ action goto_session "$SESSION_FILE_PREFIX/$session.session"
