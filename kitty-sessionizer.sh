@@ -114,3 +114,16 @@ fi
 
 
 kitten @ action goto_session "$SESSION_FILE_PREFIX/$session.session"
+
+# Focus the first tab
+title=$(awk '/^new_tab/ {
+    line = substr($0, 9);
+    if (length(line) > 0) {
+        first = substr(line, 1, 1);
+        rest = substr(line, 2);
+        gsub(/[[:space:]]/, "\\s", rest);
+        print first rest;
+    }
+    exit
+}' "$SESSION_FILE_PREFIX/$session.session")
+kitten @ focus-tab --match "title:$title"
