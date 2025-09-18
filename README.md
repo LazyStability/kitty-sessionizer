@@ -6,6 +6,10 @@ The sessions files in `XDG_DATA_HOME` will be prioritized.
 
 It will create a session file based on a provided `default.session` file, in it `@@session@@` and `@@session-path@@` files will be substituted.
 
+# Requirements
+- `fzf` installed
+- kitty nightly, or build from source, later than commit `e1d8565fb68570113fef979a68ef70fbe99e67c0`
+
 # Todo:
 - [ ] Create a kitten based on the procedure
 - [ ] Remove Code from the primeagen repo because of possible licensing issues 
