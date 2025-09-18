@@ -11,10 +11,12 @@ show_help(){
         printf "%s\n" \
             "Usage: kitty-sessionizer [OPTIONS]" \
             "Options:" \
-            "  -h, --help             Display this help message" \
-            "  -s, --session <name>   session command index" \
-            "  -p, --persistent       create Session in XDG_DATA_HOME instead of tmp" \
-            "  -v, --version          print the current version" \
+            "  -h, --help                   Display this help message" \
+            "  -s, --session <name>         Open the specified session" \
+            "  -n, --create-named-session   Create Session in XDG_DATA_HOME instead of tmp" \
+            "                               Enter a name and a path, if path is left empty" \
+            "                               The picker opens for you to choose a path" \
+            "  -v, --version                Print the current version" \
             " " \
             "For more information about kitty session visit: https://sw.kovidgoyal.net/kitty/overview/#startup-sessions"
 }
@@ -39,11 +41,8 @@ while [[ "$#" -gt 0 ]]; do
         exit
         ;;
     -s | --session)
-        # TODO: Add a function to select 1-5 prominent sessions
-        # Something like kitty-sessionizer -s 0
-        session_name="$2"
-        echo "Not implemented yet" >&2
-        exit 1
+        session_path="not-empty"
+        session="$2"
         shift
         shift
         ;;
@@ -51,7 +50,7 @@ while [[ "$#" -gt 0 ]]; do
         printf "kitty-sessionizer %s created by LazyStabilty" "$VERSION"
         exit
         ;;
-    -p | --persistent)
+    -n | --create-named-session)
         SESSION_FILE_PREFIX="$PERSISTENT_SESSION_STORAGE"
         shift
         ;;
@@ -61,6 +60,11 @@ while [[ "$#" -gt 0 ]]; do
         ;;
     esac
 done
+
+if [[ "$SESSION_FILE_PREFIX" == "$PERSISTENT_SESSION_STORAGE" ]]; then
+    read -rp "Session Name:" session
+    read -erp "Session path:" session_path
+fi
 
 ## Functions ##
 find_dirs() {
