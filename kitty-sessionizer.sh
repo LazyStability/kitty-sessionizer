@@ -73,7 +73,7 @@ log "kitty-sessionizer($VERSION): session=$session path=$session_path"
 
 ## Functions ##
 find_dirs() {
-    find "$PERSISTENT_SESSION_STORAGE"  -type f  -name '*.session' -print0 | xargs -0 -- basename -s .session
+    find "$PERSISTENT_SESSION_STORAGE"  -type f  -name '*.kitty-session' -print0 | xargs -0 -- basename -s .kitty-session
 
     # note: TS_SEARCH_PATHS is an array of paths to search for directories
     # if the path ends with :number, it will search for directories with a max depth of number ;)
@@ -91,12 +91,12 @@ find_dirs() {
     done
 }
 
-# Creates a default file, change ./default.session if you want it to look different
+# Creates a default file, change ./default.kitty-session if you want it to look different
 create_session_file(){
-    log "Creating session file: $SESSION_FILE_PREFIX/$session.session"
-    cat "$CONFIG_DIR"/default.session > "$SESSION_FILE_PREFIX/$session.session"
-    sed -i s#@@session-path@@#"$session_path"# "$SESSION_FILE_PREFIX/$session.session" 
-    sed -i s#@@session@@#"$session"# "$SESSION_FILE_PREFIX/$session.session" 
+    log "Creating session file: $SESSION_FILE_PREFIX/$session.kitty-session"
+    cat "$CONFIG_DIR"/default.kitty-session > "$SESSION_FILE_PREFIX/$session.kitty-session"
+    sed -i s#@@session-path@@#"$session_path"# "$SESSION_FILE_PREFIX/$session.kitty-session" 
+    sed -i s#@@session@@#"$session"# "$SESSION_FILE_PREFIX/$session.kitty-session" 
 }
 
 ## Script ##
@@ -115,15 +115,15 @@ log "Variables set: session=$session path=$session_path"
 
 mkdir -p "$SESSION_FILE_PREFIX"
 
-if [[ -f "$PERSISTENT_SESSION_STORAGE/$session.session" ]]; then
+if [[ -f "$PERSISTENT_SESSION_STORAGE/$session.kitty-session" ]]; then
     SESSION_FILE_PREFIX="$PERSISTENT_SESSION_STORAGE"
-elif [[ ! -f "$SESSION_FILE_PREFIX/$session.session" ]]; then
+elif [[ ! -f "$SESSION_FILE_PREFIX/$session.kitty-session" ]]; then
     create_session_file
 fi
 
 
-log "Opening:$SESSION_FILE_PREFIX/$session.session"
-kitten @ action goto_session "$SESSION_FILE_PREFIX/$session.session"
+log "Opening:$SESSION_FILE_PREFIX/$session.kitty-session"
+kitten @ action goto_session "$SESSION_FILE_PREFIX/$session.kitty-session"
 
 # Focus the first tab
 title=$(awk '/^new_tab/ {
@@ -135,6 +135,6 @@ title=$(awk '/^new_tab/ {
         print first rest;
     }
     exit
-}' "$SESSION_FILE_PREFIX/$session.session")
+}' "$SESSION_FILE_PREFIX/$session.kitty-session")
 log "title of focused tab:$title"
 kitten @ focus-tab --match "title:$title"
