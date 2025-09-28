@@ -16,6 +16,7 @@ show_help(){
             "  -n, --create-named-session   Create Session in XDG_DATA_HOME instead of tmp" \
             "                               Enter a name and a path, if path is left empty" \
             "                               The picker opens for you to choose a path" \
+            "  -e, --edit                   Edit a session file" \
             "  -v, --version                Print the current version" \
             " " \
             "For more information about kitty session visit: https://sw.kovidgoyal.net/kitty/overview/#startup-sessions"
@@ -27,6 +28,7 @@ log(){
 ## Variables ##
 session=""
 session_path=""
+editing=""
 
 ## Entry point ##
 if [[ -f "$CONFIG_FILE" ]]; then
@@ -56,6 +58,10 @@ while [[ "$#" -gt 0 ]]; do
         ;;
     -n | --create-named-session)
         SESSION_FILE_PREFIX="$PERSISTENT_SESSION_STORAGE"
+        shift
+        ;;
+    -e | --edit)
+        editing="yes"
         shift
         ;;
     *)
@@ -122,7 +128,11 @@ elif [[ ! -f "$SESSION_FILE_PREFIX/$session.kitty-session" ]]; then
 fi
 
 
-log "Opening:$SESSION_FILE_PREFIX/$session.kitty-session"
+log "Opening:$SESSION_FILE_PREFIX/$session.kitty-session editing=$editing"
+[[ -n "$editing" ]] && {
+    $EDITOR "$SESSION_FILE_PREFIX/$session.kitty-session"
+    exit 0
+}
 kitten @ action goto_session "$SESSION_FILE_PREFIX/$session.kitty-session"
 
 # Focus the first tab
